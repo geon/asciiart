@@ -6,49 +6,16 @@ $dir = 1;
 
 function handlePage($domain, $pageContent){
 
-// Method A: Collect all comments.
-//	$comments = extractComments($pageContent);
-//	$asciiArts = array_filter($comments, 'isAsciiArt');
-//
-//	// Save found art.
-//	if($asciiArts){
-//		$domainAndArt = "\n\n\n".$domain."\n\n".implode("\n\n", $asciiArts);
-//		file_put_contents('ascii_art.txt', $domainAndArt, FILE_APPEND);
-//		print('<pre>'.htmlspecialchars($domainAndArt).'</pre>');
-//	}
-
-// Method B: Just pick the first comment on the page. (Probably where any ascii art will be placed.)
+	// We only bother to look at the first comment of the page.
 	$firstComment = extractFirstComment($pageContent);
+	
 	if($firstComment && isAsciiArt($firstComment)){
+
+		// Log the comment and the domain name to a file.
 		$domainAndArt = "\n\n\n".$domain."\n\n".$firstComment;
 		file_put_contents('ascii_art.txt', $domainAndArt, FILE_APPEND);
 		print('<pre>'.htmlspecialchars($domainAndArt).'</pre>');
 	}
-}
-
-
-function extractComments($pageContent){
-
-	$tidy = tidy_parse_string($pageContent, array(), 'ascii');
-
-	return tidyComments($tidy->root());
-}
-
-
-function tidyComments($tinyNode){
-
-	// Found value.
-	if($tinyNode->isComment())
-		return array($tinyNode->value);
-		
-
-	// Recurse.
-	$comments = array();
-	if($tinyNode->hasChildren())
-		foreach($tinyNode->child as $child)
-			$comments = array_merge($comments, tidyComments($child));
-	return $comments;
-
 }
 
 
@@ -118,14 +85,6 @@ function isAsciiArt($comment){
 		
 		'<rdf:RDF',
 		'src="',
-//		'href="',
-//		'bgcolor="',
-//		'target="',
-//		'javascript',
-//		'function(',
-//		'<tr',
-//		'<td',
-//		'<div',
 	) as $codeFragment)
 		if(strpos($comment, $codeFragment) !== false)
 			return false;
@@ -143,14 +102,6 @@ function isAsciiArt($comment){
 	// Must have more than 3 consecutive of the same symbol.
 	if(!preg_match('/(.)\1{3}/', $comment))
 		return false;
-
-//	$funnyChars = array('/', '\\', '|', '*', '+', '_', '(', ')', '#', '=', '´', '`', '\'', '^', '©', '@', '[', ']', '≈', '†', '»', '«', '.', ',');
-//	$numFunny = $numChars - strlen(str_replace($funnyChars, array_fill(0, count($funnyChars), ''), $comment));
-//	$numAlphaNumeric = preg_match_all('/[A-Za-z0-9]/', $comment, $matches);
-//
-//	// The ratio of "funny" symbols to alphanumerical should be 5.
-//	if(!($numFunny > $numAlphaNumeric*5))
-//		return false;
 	
 	return true;	
 }
