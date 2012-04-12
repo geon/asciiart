@@ -1,7 +1,30 @@
 <?php
 
-$dir = 1;
+$cacheDirName = 'cache';
 
+// Loop over all sub directories of "cache".
+if($outerDirHandle = opendir($cacheDirName)) {
+	while(false !== ($innerDirName = readdir($outerDirHandle))){
+		if($innerDirName != '.' && $innerDirName != '..' && is_dir($cacheDirName.'/'.$innerDirName)){
+			
+
+			// In each subdirectory, loop over all files (pages).
+			if($innerDirHandle = opendir($cacheDirName.'/'.$innerDirName)) {
+				while(false !== ($fileName = readdir($innerDirHandle))){
+					if($fileName != '.' && $fileName != '..' && !is_dir($cacheDirName.'/'.$innerDirName.'/'.$fileName)){
+						
+						// Process the page.
+						print($fileName.'<br>');
+						handlePage($fileName, gzinflate(file_get_contents($cacheDirName.'/'.$innerDirName.'/'.$fileName)));
+					}
+				}
+				closedir($innerDirHandle);
+			}
+		}
+	}
+	closedir($outerDirHandle);
+}
+print($innerDirName);
 
 
 function handlePage($domain, $pageContent){
