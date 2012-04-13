@@ -10,7 +10,6 @@ if ($fileHandle) {
 	while(1){
 
 		// Refill pool while its not full and there are lines left in the file. 
-		print("\n\n\n".'Added:');
 		while($numRequestsInPool < $poolSize && ($line = fgets($fileHandle)) !== false){
 
 			$domain = trim($line);
@@ -20,9 +19,6 @@ if ($fileHandle) {
 			if(is_file($cachedFilePath)){
 
 			}else{
-
-				print("\n".$domain );
-
 				// Initiate download.
 	
 				// Set up curl to download the frontpage.
