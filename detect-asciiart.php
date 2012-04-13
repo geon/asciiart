@@ -1,20 +1,20 @@
 <?php
 
 $cacheDirName = 'cache';
+$numFilesProcessed = 0;
 
 // Loop over all sub directories of "cache".
 if($outerDirHandle = opendir($cacheDirName)) {
 	while(false !== ($innerDirName = readdir($outerDirHandle))){
 		if($innerDirName != '.' && $innerDirName != '..' && is_dir($cacheDirName.'/'.$innerDirName)){
 			
-
 			// In each subdirectory, loop over all files (pages).
 			if($innerDirHandle = opendir($cacheDirName.'/'.$innerDirName)) {
 				while(false !== ($fileName = readdir($innerDirHandle))){
 					if($fileName != '.' && $fileName != '..' && !is_dir($cacheDirName.'/'.$innerDirName.'/'.$fileName)){
 						
 						// Process the page.
-						print($fileName.'<br>');
+						++$numFilesProcessed;
 						handlePage($fileName, gzinflate(file_get_contents($cacheDirName.'/'.$innerDirName.'/'.$fileName)));
 					}
 				}
@@ -24,10 +24,11 @@ if($outerDirHandle = opendir($cacheDirName)) {
 	}
 	closedir($outerDirHandle);
 }
-print($innerDirName);
 
 
 function handlePage($domain, $pageContent){
+	
+	global $numFilesProcessed;
 
 	// We only bother to look at the first comment of the page.
 	$firstComment = extractFirstComment($pageContent);
@@ -37,7 +38,8 @@ function handlePage($domain, $pageContent){
 		// Log the comment and the domain name to a file.
 		$domainAndArt = "\n\n\n".$domain."\n\n".$firstComment;
 		file_put_contents('ascii_art.txt', $domainAndArt, FILE_APPEND);
-		print('<pre>'.htmlspecialchars($domainAndArt).'</pre>');
+		print("\n".'<pre>'.htmlspecialchars($domainAndArt).'</pre>');
+		print("\n\n".'processed '.$numFilesProcessed.' files');
 	}
 }
 
@@ -78,6 +80,16 @@ function isAsciiArt($comment){
 	if($numChars > 2000)
 		return false;
 
+	$numLines = count(explode("\n", $comment));
+
+	// Must be at least 5 lines.
+	if($numLines < 5)
+		return false;
+
+	// Must be less than a page.
+	if($numLines > 40)
+		return false;
+
 	// Try to block commented-out HTML. Roughly sorted by frequency of occurence as anecdotally spotted in the wild.
 	foreach(array(
 
@@ -100,31 +112,21 @@ function isAsciiArt($comment){
 		'</li>',
 		'</ul>',
 		'</object>',
+		'</p>',
+		'</form>',
 
 		// Some CMS signatures.
 		'TYPO3',
 		'START DEBUG OUTPUT',
 		'generated',
+		'XT-Commerce',
+		'TYPOlight',
 		
 		'<rdf:RDF',
 		'src="',
 	) as $codeFragment)
 		if(strpos($comment, $codeFragment) !== false)
 			return false;
-
-	$numLines = count(explode("\n", $comment));
-
-	// Must be at least 5 lines.
-	if($numLines < 5)
-		return false;
-
-	// Must be less than a page.
-	if($numLines > 40)
-		return false;
-
-	// Must have more than 3 consecutive of the same symbol.
-	if(!preg_match('/(.)\1{3}/', $comment))
-		return false;
 	
 	return true;	
 }
