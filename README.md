@@ -6,7 +6,7 @@ And then searching them for asciiart
 Why?
 ----
 
-*Because*. OK?
+*Because*.
 
 How?
 ----
@@ -24,6 +24,8 @@ The web stats site Alexa publishes a list of the top one million domains. Downlo
 A cURL multihandle is executed in a loop. As downloads complete and the respective handle s are removed, more URLs are added to the multihandle, keeping the number of downloads in progress constant.
 
 I've ran this code reliably for hundreds of thousands of files in a single session.
+
+It could trivially be made into a more serious tool by reading a URL list from stdin, and using the hash of the URL as the cache file name. Feel free to fork it.
 
 ### Detecting asciiart
 
