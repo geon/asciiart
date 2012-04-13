@@ -73,7 +73,7 @@ if ($fileHandle) {
 				--$numRequestsInPool;
 			}
 		}
-		print("\n\n".Downloaded '.$numFinishedFiles.' files this session.');
+		print("\n\n".'Downloaded '.$numFinishedFiles.' files this session.');
 	
 		// Are we done yet?
 		if(feof($fileHandle) && !$numRequestsInPool)
