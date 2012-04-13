@@ -16,16 +16,9 @@ if ($fileHandle) {
 			$cachedFilePath = cachedFilePath($domain);
 			if(is_file($cachedFilePath)){
 
-//				print('<br>in cache: '.$domain);
-//
-//				// Process immediately.
-//				handlePage($domain, gzinflate(file_get_contents($cachedFilePath)));
-
 			}else{
 				// Initiate download.
 	
-//				print('<br>added: '.$domain);
-				
 				// Set up curl to download the frontpage.
 				$URL = 'http://www.'.$domain;
 				$ch = curl_init($URL);
@@ -43,22 +36,20 @@ if ($fileHandle) {
 				curl_multi_add_handle($mh, $ch);
 				++$numRequestsInPool;
 			}
-
-			flush();
 		}
 		
 		// Wait for data.
 		curl_multi_select($mh);
 
 		// Process requests.
-//		print('<br>processing: ');
+		print("\n".'processing cURL: ');
 		do {
-//			print('*');
+			print('*');
 			$execReturnValue = curl_multi_exec($mh, $foo);
 		} while ($execReturnValue == CURLM_CALL_MULTI_PERFORM);
 	
 		// Handle finished requests.
-		print('<br><br><b>finished:</b>');
+		print("\n\n\n".'finished:');
 		while(false !== $handleInfo = curl_multi_info_read($mh)){
 
 			// Check if the handle is done.
@@ -66,7 +57,7 @@ if ($fileHandle) {
 				
 				$domain = $handleToDomain[$handleInfo['handle']];
 
-				print('<br>'.$domain );
+				print("\n".$domain );
 
 				// Read the page from the handle.
 				$pageContent = curl_multi_getcontent($handleInfo['handle']);
@@ -75,18 +66,14 @@ if ($fileHandle) {
 				file_put_contents(cachedFilePath($domain), gzdeflate($pageContent));
 				++$numFinishedFiles;
 
-//				handlePage($domain , $pageContent);
-
 				// Remove the handle from the pool.
 				curl_multi_remove_handle($mh, $handleInfo['handle']);
 				curl_close($handleInfo['handle']);
 				unset($handleToDomain[$handleInfo['handle']]);
 				--$numRequestsInPool;
 			}
-
-			flush();
 		}
-		print('<br><br>downloaded '.$numFinishedFiles.' files this session.');
+		print("\n\n".Downloaded '.$numFinishedFiles.' files this session.');
 	
 		// Are we done yet?
 		if(feof($fileHandle) && !$numRequestsInPool)
@@ -96,7 +83,7 @@ if ($fileHandle) {
 	curl_multi_close($mh);
 	fclose($fileHandle);
 	
-	print('<br><br>done');
+	print("\n\n".'done');
 }
 
 
