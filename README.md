@@ -11,6 +11,8 @@ Why?
 How?
 ----
 
+All the scripts are intended to be run from the command line. Aside from enabling piping and other nifty Unixy functionality, it lets you follow the progress in realtime, while Apache and your browser normally would send the script output in chunks a few kilobytes each.
+
 ### Prepare
 
 	alexa-top-1m-csv-2-domains.php
