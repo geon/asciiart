@@ -126,13 +126,20 @@ function isAsciiArt($comment){
 		'W3 Total Cache',
 		'Free CSS Templates',
 		'DYNAMIC PAGE-SPECIFIC META TAGS WILL BE PLACED HERE',
-		'Unfortunately, Microsoft has added a clever new',
+		'vBulletin',
+		'Shopsoftware by Gambio',
+		'BLOX CMS',
 		
 		// Misc. garbage
 		'<rdf:RDF',
 		'src="',
 		'Exception]:',
 		'DoubleClick',
+		'ct=WEBSITE',
+		'Unfortunately, Microsoft has added a clever new',
+		'skype.com/go/skypebuttons',
+		'eXTReMe Non Public Tracker Code',
+		'CURRENCY SETTING:',
 	) as $codeFragment)
 		if(strpos($comment, $codeFragment) !== false)
 			return false;
