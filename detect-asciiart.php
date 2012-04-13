@@ -38,7 +38,7 @@ function handlePage($domain, $pageContent){
 		// Log the comment and the domain name to a file.
 		$domainAndArt = "\n\n\n".$domain."\n\n".$firstComment;
 		file_put_contents('ascii_art.txt', $domainAndArt, FILE_APPEND);
-		print("\n".'<pre>'.htmlspecialchars($domainAndArt).'</pre>');
+		print("\n".$domainAndArt);
 		print("\n\n".'processed '.$numFilesProcessed.' files');
 	}
 }
@@ -93,7 +93,7 @@ function isAsciiArt($comment){
 	// Try to block commented-out HTML. Roughly sorted by frequency of occurence as anecdotally spotted in the wild.
 	foreach(array(
 
-		// Head element stuff.
+		// Head element stuff
 		'<style',
 		'<meta',
 		'<![endif]',
@@ -102,7 +102,7 @@ function isAsciiArt($comment){
 		'[if lte IE ',
 		'[if gte IE',
 
-		// Some end-tags.
+		// Some end-tags
 		'</td>',
 		'</tr>',
 		'</script>',
@@ -114,16 +114,25 @@ function isAsciiArt($comment){
 		'</object>',
 		'</p>',
 		'</form>',
+		'</body>',
 
-		// Some CMS signatures.
+		// Some CMS signatures
 		'TYPO3',
 		'START DEBUG OUTPUT',
 		'generated',
 		'XT-Commerce',
 		'TYPOlight',
+		'Contao Open Source CMS',
+		'W3 Total Cache',
+		'Free CSS Templates',
+		'DYNAMIC PAGE-SPECIFIC META TAGS WILL BE PLACED HERE',
+		'Unfortunately, Microsoft has added a clever new',
 		
+		// Misc. garbage
 		'<rdf:RDF',
 		'src="',
+		'Exception]:',
+		'DoubleClick',
 	) as $codeFragment)
 		if(strpos($comment, $codeFragment) !== false)
 			return false;
