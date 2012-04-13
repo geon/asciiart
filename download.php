@@ -1,6 +1,6 @@
 <?php
 
-$poolSize = 100;
+$poolSize = 20;
 $numRequestsInPool = 0;
 $numFinishedFiles = 0;
 $mh = curl_multi_init();
@@ -10,13 +10,19 @@ if ($fileHandle) {
 	while(1){
 
 		// Refill pool while its not full and there are lines left in the file. 
-		while($numRequestsInPool < $poolSize && ($domain = fgets($fileHandle)) !== false){
+		print("\n\n\n".'Added:');
+		while($numRequestsInPool < $poolSize && ($line = fgets($fileHandle)) !== false){
+
+			$domain = trim($line);
 
 			// Check if it's in the cache.
 			$cachedFilePath = cachedFilePath($domain);
 			if(is_file($cachedFilePath)){
 
 			}else{
+
+				print("\n".$domain );
+
 				// Initiate download.
 	
 				// Set up curl to download the frontpage.
@@ -27,6 +33,7 @@ if ($fileHandle) {
 					CURLOPT_FOLLOWLOCATION	=> true,
 					CURLOPT_MAXREDIRS		=> 3,
 					CURLOPT_TIMEOUT			=> 60,
+					CURLOPT_CONNECTTIMEOUT  => 10, 
 				));
 				
 				// Remember what domain this handle is downloading.
@@ -37,19 +44,28 @@ if ($fileHandle) {
 				++$numRequestsInPool;
 			}
 		}
-		
-		// Wait for data.
-		curl_multi_select($mh);
 
-		// Process requests.
-		print("\n".'processing cURL: ');
+		print("\n\n".'Processing cURL: ');
 		do {
 			print('*');
-			$execReturnValue = curl_multi_exec($mh, $foo);
-		} while ($execReturnValue == CURLM_CALL_MULTI_PERFORM);
+			$mrc = curl_multi_exec($mh, $active);
+		} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+		
+		if ($active && $mrc == CURLM_OK) {
+
+			print("\n\n".'Waiting for data...');
+			if (curl_multi_select($mh) != -1) {
+
+				print("\n\n".'Processing cURL: ');
+				do {
+					print('*');
+					$mrc = curl_multi_exec($mh, $active);
+				} while ($mrc == CURLM_CALL_MULTI_PERFORM);
+			}
+		}
 	
 		// Handle finished requests.
-		print("\n\n\n".'finished:');
+		print("\n\n\n".'Finished:');
 		while(false !== $handleInfo = curl_multi_info_read($mh)){
 
 			// Check if the handle is done.
