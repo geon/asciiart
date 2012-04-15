@@ -1,7 +1,7 @@
 Using cURL and PHP to download lots and lots of files
 =====================================================
-And then searching them for asciiart
-------------------------------------
+And then searching them for ASCII art
+-------------------------------------
 
 Why?
 ----
@@ -33,10 +33,9 @@ It could trivially be made into a more serious tool by reading a URL list from s
 
 	$ php detect-asciiart.php
 
-I found only one other algorithm to do it, and it wasn't very good. I just use a few simple heurustics, whith a blacklist beeing the most important. I want to make as few assumpions as possible about what constitutes asciiart. Hence, I don't try to look for more examples of what I have altready seen, but just filter out what I can be sure of is *not* art. This means a more sophisticated approach like a Bayesian fiter is not useful in this context.
+I found only one other algorithm to do it, and it wasn't very good. I just use a few simple heuristics, with a blacklist being the most important. I want to make as few assumptions as possible about what constitutes ASCII art. Hence, I don't try to look for more examples of what I have already seen, but just filter out what I can be sure of is *not* art. This means a more sophisticated approach like a Bayesian filter is not useful in this context.
 
 Your code looks like crap
 -------------------------
 
 It does, doesn't it? You are welcome to fork it!
-
