@@ -46,7 +46,7 @@ function handlePage($domain, $pageContent){
 
 function extractFirstComment($pageContent){
 
-	$tidy = tidy_parse_string($pageContent, array(), 'ascii');
+	$tidy = tidy_parse_string($pageContent, array(), 'utf8' /* 'ascii', 'latin1' */);
 
 	return firstTidyComment($tidy->root());
 }
