@@ -127,8 +127,11 @@ function isAsciiArt($comment){
 		'Free CSS Templates',
 		'DYNAMIC PAGE-SPECIFIC META TAGS WILL BE PLACED HERE',
 		'vBulletin',
+		'phpBB',
 		'Shopsoftware by Gambio',
 		'BLOX CMS',
+		'Shopsystem powered by',
+		'phpwcms',
 		
 		// Misc. garbage
 		'<rdf:RDF',
@@ -140,6 +143,12 @@ function isAsciiArt($comment){
 		'skype.com/go/skypebuttons',
 		'eXTReMe Non Public Tracker Code',
 		'CURRENCY SETTING:',
+		'This page is valid XHTML 1.0 Transitional',
+		'Be inspired, but please don\'t steal...',
+		'This credit note should not be removed',
+		'chCounter',
+		'These paths are pathed fo veiwing by a browser',
+		'MyFonts Webfont Build',
 	) as $codeFragment)
 		if(strpos($comment, $codeFragment) !== false)
 			return false;
