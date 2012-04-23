@@ -3,6 +3,8 @@
 $cacheDirName = 'cache';
 $numFilesProcessed = 0;
 
+/*
+
 // Loop over all sub directories of "cache".
 if($outerDirHandle = opendir($cacheDirName)) {
 	while(false !== ($innerDirName = readdir($outerDirHandle))){
@@ -26,6 +28,48 @@ if($outerDirHandle = opendir($cacheDirName)) {
 }
 
 
+*/
+
+
+$inFile = @fopen('domains.txt', 'r');
+$outFile = @fopen('ascii_art.txt', 'a');
+
+if ($inFile && $outFile) {
+
+	// Read line by line until failing.
+	while(($line = fgets($inFile)) !== false){
+		
+		// Extract the domain from the line.
+		$domain = trim($line);
+
+		$innerDirName = substr($domain, 0, min(2, strpos($domain, '.')));
+		$pageContent = gzinflate(file_get_contents($cacheDirName.'/'.$innerDirName.'/'.$domain));
+
+		// We only bother to look at the first comment of the page.
+		$firstComment = extractFirstComment($pageContent);
+		
+		if($firstComment && isAsciiArt($firstComment)){
+	
+			// Log the comment and the domain name to a file.
+			$domainAndArt = "\n\n\n".$domain."\n\n".$firstComment;
+
+			fwrite($outFile, $domainAndArt);
+			
+			print("\n".$domainAndArt);
+			print("\n\n".'processed '.$numFilesProcessed.' files');
+		}
+		
+		++$numFilesProcessed;
+	}
+
+	fclose($outFile);
+	fclose($inFile);
+	
+}
+
+print('done');
+
+
 function handlePage($domain, $pageContent){
 	
 	global $numFilesProcessed;
@@ -46,7 +90,7 @@ function handlePage($domain, $pageContent){
 
 function extractFirstComment($pageContent){
 
-	$tidy = tidy_parse_string($pageContent, array(), 'utf8' /* 'ascii', 'latin1' */);
+	$tidy = tidy_parse_string($pageContent, array(), 'ascii');
 
 	return firstTidyComment($tidy->root());
 }
