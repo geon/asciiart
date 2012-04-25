@@ -21,7 +21,7 @@ The web stats site Alexa publishes a list of the top one million domains. Downlo
 
 ### Requirements
 
-	$ sudo apt-get install php5-curl php5-tiny
+	$ sudo apt-get install php5-curl php5-tidy
 
 ### Download a million files
 
