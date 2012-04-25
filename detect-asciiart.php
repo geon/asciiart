@@ -43,23 +43,27 @@ if ($inFile && $outFile) {
 		$domain = trim($line);
 
 		$innerDirName = substr($domain, 0, min(2, strpos($domain, '.')));
-		$pageContent = gzinflate(file_get_contents($cacheDirName.'/'.$innerDirName.'/'.$domain));
+		$innerFileName = $cacheDirName.'/'.$innerDirName.'/'.$domain;
 
-		// We only bother to look at the first comment of the page.
-		$firstComment = extractFirstComment($pageContent);
-		
-		if($firstComment && isAsciiArt($firstComment)){
+		if(file_exists($innerFileName)){
+			$pageContent = gzinflate(file_get_contents($innerFileName));
 	
-			// Log the comment and the domain name to a file.
-			$domainAndArt = "\n\n\n".$domain."\n\n".$firstComment;
-
-			fwrite($outFile, $domainAndArt);
+			// We only bother to look at the first comment of the page.
+			$firstComment = extractFirstComment($pageContent);
 			
-			print("\n".$domainAndArt);
-			print("\n\n".'processed '.$numFilesProcessed.' files');
-		}
+			if($firstComment && isAsciiArt($firstComment)){
 		
-		++$numFilesProcessed;
+				// Log the comment and the domain name to a file.
+				$domainAndArt = "\n\n\n".$domain."\n\n".$firstComment;
+	
+				fwrite($outFile, $domainAndArt);
+				
+				print("\n".$domainAndArt);
+				print("\n\n".'processed '.$numFilesProcessed.' files');
+			}
+			
+			++$numFilesProcessed;
+		}
 	}
 
 	fclose($outFile);
